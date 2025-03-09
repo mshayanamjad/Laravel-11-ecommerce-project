@@ -1,0 +1,193 @@
+.ers-form-wrapper {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.ers-stars-container {
+    display: flex;
+    gap: 5px;
+    margin: 15px 0;
+    position: relative;
+}
+
+.ers-star-btn {
+    font-size: 32px;
+    color: #dee2e6;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.ers-star-btn.active {
+    color: #ffd700;
+}
+
+.ers-rating-progress {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    margin: 25px 0;
+    position: relative;
+}
+
+.ers-progress-fill {
+    height: 100%;
+    background: #ffd700;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.ers-text-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ced4da;
+    border-radius: 6px;
+    min-height: 150px;
+    margin: 15px 0 0;
+    font-size: 16px;
+    color: #111111;
+}
+
+.ers-submit-btn {
+    background-color: #111111;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.ers-reviews-container {
+    margin-top: 40px;
+}
+
+#ers-reviews-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.ers-review-card {
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(1, 1, 1, 0.05);
+}
+
+.ers-review-rating {
+    color: #ffd700;
+    font-size: 12px;
+    margin: 3px 0;
+}
+
+.reviewer-name {
+    font-size: 16px !important;
+    margin-bottom: 5px !important;
+    color: #111111;
+    text-transform: capitalize;
+}
+
+.ers-review-meta {
+    font-size: 12px;
+}
+
+.ers-average-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 105px;
+}
+
+.ers-average-text span {
+    text-align: left;
+    margin: 0;
+    font-weight: bold;
+    color: #111111;
+    text-align: center;
+    width: 100%;
+    font-size: 30px;
+}
+
+.ers-average-text .rating i {
+    font-size: 18px;
+    color: #f7941d;
+    display: inline-block;
+    margin-right: -3px;
+}
+
+.ers-reviews-container .ers-review-card {
+    position: relative;
+}
+
+.ers-reviews-container .dropdown {
+    position: absolute;
+    display: inline-block;
+    right: 10px;
+    top: 10px;
+}
+
+.ers-reviews-container .dropdown-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+}
+
+.ers-reviews-container .dropdown-toggle::after {
+    display: none;
+}
+
+.ers-reviews-container .dropdown-menu {
+    display: none;
+    position: absolute;
+    left: -95px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 5px 0;
+    min-width: 150px;
+}
+
+.ers-reviews-container .dropdown-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.ers-reviews-container .dropdown-menu li:hover {
+    background: #f0f0f0;
+}
+
+.ers-reviews-container .dropdown-menu li a,
+.ers-reviews-container .dropdown-menu li button {
+    font-size: 16px;
+    color: #111111;
+    line-height: 1.1em;
+    font-weight: 400;
+    width: 100%;
+    display: block;
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+    text-align: left;
+    padding: 0;
+}
+
+.ers-reviews-container .dropdown-menu li:hover a,
+.ers-reviews-container .dropdown-menu li:hover button {
+    color: #e53637;
+}
+
+.ers-reviews-container s.dropdown:hover .dropdown-menu {
+    display: block;
+}
