@@ -1,0 +1,11 @@
+Admin Login Detail
+
+email: admin@gmail.com
+pass: admin
+
+
+Customer Login Detail
+for all customer which already register have the same pass (password)
+
+email: lonnie39@example.org
+pass: password
