@@ -67,6 +67,8 @@ Route::group(['prefix' => 'male-fashion'], function () {
             Route::get('delivered-orders-list', [ProfileController::class, 'orderDeliveredList'])->name('orderDeliveredList');
             Route::get('/order-detail/{id}', [ProfileController::class, 'orderDetail'])->name('orderDetail');
             Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+            Route::get('/change-password', [AuthController::class, 'changePassword'])->name('changePassword');
+            Route::post('/change-password', [AuthController::class, 'changePasswordProcess'])->name('changePasswordProcess');
             Route::get('wishlist', [WhishlistController::class, 'viewWishlist'])->name('viewWishlist');
             Route::post('add-to-wishlist', [WhishlistController::class, 'addToWishlist'])->name('addToWishlist');
             Route::post('remove-to-wishlist', [WhishlistController::class, 'reomveWhishlistPro'])->name('reomveWhishlistPro');

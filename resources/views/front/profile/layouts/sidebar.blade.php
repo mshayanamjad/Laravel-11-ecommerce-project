@@ -58,7 +58,7 @@
         </li>
         <li class="nav-item">
           <a
-            href=""
+            href="{{ route('front.changePassword') }}"
             class="collapsed"
           >
             <i class="fas fa-lock"></i>

@@ -95,6 +95,12 @@
                                             <a class="d-block w-100" href="{{ route('front.userProfile') }}">Profile</a>
                                         </li>
                                         <li class="text-left">
+                                            <a class="d-block w-100" href="{{ route('front.orderList') }}">My Orders</a>
+                                        </li>
+                                        <li class="text-left">
+                                            <a class="d-block w-100" href="{{ route('front.changePassword') }}">Change Password</a>
+                                        </li>
+                                        <li class="text-left">
                                             <a class="d-block w-100" href="{{ route('front.viewWishlist') }}">whishlist</a>
                                         </li>
                                         <li class="text-left">

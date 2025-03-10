@@ -312,6 +312,7 @@
     <!-- SweetAlert -->
     <script src="{{ asset('admin-assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 
+
     <!-- Kaiadmin Core and Demo Scripts -->
     <script src="{{ asset('admin-assets/js/kaiadmin.min.js') }}"></script>
     <script src="{{ asset('admin-assets/js/setting-demo.js') }}"></script>
