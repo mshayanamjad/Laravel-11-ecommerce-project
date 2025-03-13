@@ -352,7 +352,7 @@ fileUploads.forEach((fileUpload, index) => {
         const file = fileUpload.files[0];
         if (file && fileUpload.name === 'image') {
             const reader = new FileReader();
-            reader.onload = (e) => imagePreviews[0].innerHTML = `<img src="${e.target.result}" alt="Preview" style="height:200px; object-fit:cover;">`;
+            reader.onload = (e) => imagePreviews[0].innerHTML = `<img src="${e.target.result}" alt="Preview" style="width:100%; height:200px; object-fit:cover;">`;
             reader.readAsDataURL(file);
         } else if (!file && fileUpload.name === 'image') {
             imagePreviews[0].innerHTML = ''; // Clear preview if no file

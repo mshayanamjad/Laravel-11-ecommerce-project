@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Log;
 class GeminiService
 {
     protected $apiKey;
+    protected $client;
 
     public function __construct()
     {
         $this->apiKey = env('GEMINI_API_KEY'); // Ensure your API key is in .env
+        $this->client = new Client(['base_uri' => 'https://generativelanguage.googleapis.com/']);
+
     }
 
     public function generateProducts()
@@ -65,9 +68,6 @@ class GeminiService
             \Log::error('Gemini API Request Failed', ['error' => $e->getMessage()]);
             return null;
         }
-    }
-    
-    
-    
-    
+    } 
+ 
 }
