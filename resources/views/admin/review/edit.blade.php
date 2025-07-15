@@ -53,12 +53,14 @@
                           {{-- Rating Field --}}
                           <div class="form-group col-md-6 my-rating">
                             <label for="rating">Rating</label>
-                            <select class="form-control" id="rating" name="rating">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <option value="{{ $i }}" {{ $review->rating == $i ? 'selected' : '' }}>
-                                        {{ str_repeat('★', $i) . str_repeat('☆', 5 - $i) }}
-                                    </option>
-                                @endfor
+                            <select class="form-control" id="rating" name="rating" style="color: #f7941d; font-size: 15px;">
+                              @for($i = 1; $i <= 5; $i++)
+                                <option value="{{ $i }}" {{ $review->rating == $i ? 'selected' : '' }}>
+                                  @for($j = 1; $j <= $i; $j++)
+                                      ★
+                                  @endfor
+                                </option>
+                              @endfor
                             </select>
                           </div>
                           {{-- Comment Status Field --}}

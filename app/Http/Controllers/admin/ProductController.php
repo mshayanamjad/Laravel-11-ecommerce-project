@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\SubCategory;
+use App\Trait\ProductList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,92 +17,33 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    use ProductList;
 
     public function publish(Request $request)
     {
-        $query = Product::orderBy('id', 'desc')->with('categories')->where('status', 'publish');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('title', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $publishedProducts = $query->paginate(10);
-        // Count all products in the database
-        $count = Product::count();
-
-        // Count published products
-        $publishedCount = Product::where('status', 'publish')->count();
-
-        // Count draft products
-        $draftCount = Product::where('status', 'draft')->count();
-
-        $data = [
-            'publishedProducts' => $publishedProducts,
-            'count' => $count,
-            'publishedCount' => $publishedCount,
-            'draftCount' => $draftCount,
-        ];
-
-        return view('admin.product.publish', $data);
+        $data = $this->getProductData($request, 'publish');
+        return view('admin.product.publish', [
+            'publishedProducts' => $data['products'],
+            'count' => $data['count'],
+            'publishedCount' => $data['publishedCount'],
+            'draftCount' => $data['draftCount'],
+        ]);
     }
 
     public function draft(Request $request)
     {
-        $query = Product::orderBy('id', 'desc')->with('categories')->where('status', 'draft');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('title', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $draftProducts = $query->paginate(10);
-        // Count all products in the database
-        $count = Product::count();
-
-        // Count published products
-        $publishedCount = Product::where('status', 'publish')->count();
-
-        // Count draft products
-        $draftCount = Product::where('status', 'draft')->count();
-
-        $data = [
-            'draftProducts' => $draftProducts,
-            'count' => $count,
-            'publishedCount' => $publishedCount,
-            'draftCount' => $draftCount,
-        ];
-
-        return view('admin.product.draft', $data);
+        $data = $this->getProductData($request, 'draft');
+        return view('admin.product.draft', [
+            'draftProducts' => $data['products'],
+            'count' => $data['count'],
+            'publishedCount' => $data['publishedCount'],
+            'draftCount' => $data['draftCount'],
+        ]);
     }
 
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $query = Product::orderBy('id', 'desc')->with('categories');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('title', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $products = $query->paginate(10);
-        // Count all products in the database
-        $count = Product::count();
-
-        // Count published products
-        $publishedCount = Product::where('status', 'publish')->count();
-
-        // Count draft products
-        $draftCount = Product::where('status', 'draft')->count();
-
-        $data = [
-            'products' => $products,
-            'count' => $count,
-            'publishedCount' => $publishedCount,
-            'draftCount' => $draftCount,
-        ];
-
+        $data = $this->getProductData($request); // No status filter
         return view('admin.product.list', $data);
     }
 
@@ -257,9 +199,26 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         $product = Product::find($id);
-        $categories = Category::orderBy('name', 'asc')->where('status', 'active')->get();
-        $subCategories = SubCategory::orderBy('name', 'asc')->where('status', 'active')->get();
-        $brands = Brand::orderBy('name', 'asc')->where('status', 'active')->get();
+        $categories = Category::orderBy('name', 'asc')
+            ->where('status', 'active')
+            ->get()
+            ->sortByDesc(function ($category) use ($product) {
+                return $product->categories->contains($category->id);
+            });
+        $subCategories = SubCategory::where('status', 'active')
+            ->orderBy('name', 'desc')
+            ->get()
+            ->sortByDesc(function ($subCategory) use ($product) {
+                return $product->subCategories->contains($subCategory->id);
+            });
+
+        $brands = Brand::orderBy('name', 'asc')
+            ->where('status', 'active')
+            ->get()
+            ->sortByDesc(function ($brand) use ($product) {
+                return $product->brands->contains($brand->id);
+            });
+
 
         if (empty($product)) {
             return redirect()->back()->with('error', 'Record Not Found');

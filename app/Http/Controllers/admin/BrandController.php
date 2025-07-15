@@ -4,96 +4,29 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Trait\BrandList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class BrandController extends Controller
 {
+    use BrandList;
 
     public function active(Request $request)
     {
-        $query = Brand::latest('id')->where('status', 'active');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('name', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $brands = $query->paginate(10);
-        $count = Brand::count();
-
-        // Count published Brands
-        $activeCount = Brand::where('status', 'active')->count();
-
-        // Count draft Brands
-        $blockCount = Brand::where('status', 'block')->count();
-
-        $data = [
-            'brands' => $brands,
-            'count' => $count,
-            'activeCount' => $activeCount,
-            'blockCount' => $blockCount,
-        ];
-
+        $data = $this->getBrandData($request, 'active');
         return view('admin.brand.active', $data);
     }
 
-
     public function block(Request $request)
     {
-        $query = Brand::latest('id')->where('status', 'block');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('name', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $brands = $query->paginate(10);
-        $count = Brand::count();
-
-        // Count published Brands
-        $activeCount = Brand::where('status', 'active')->count();
-
-        // Count draft Brands
-        $blockCount = Brand::where('status', 'block')->count();
-
-        $data = [
-            'brands' => $brands,
-            'count' => $count,
-            'activeCount' => $activeCount,
-            'blockCount' => $blockCount,
-        ];
-
+        $data = $this->getBrandData($request, 'block');
         return view('admin.brand.block', $data);
     }
 
-
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $query = Brand::latest('id');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('name', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $brands = $query->paginate(10);
-        $count = Brand::count();
-
-        // Count published Brands
-        $activeCount = Brand::where('status', 'active')->count();
-
-        // Count draft Brands
-        $blockCount = Brand::where('status', 'block')->count();
-
-        $data = [
-            'brands' => $brands,
-            'count' => $count,
-            'activeCount' => $activeCount,
-            'blockCount' => $blockCount,
-        ];
-
+        $data = $this->getBrandData($request);
         return view('admin.brand.list', $data);
     }
 
