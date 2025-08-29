@@ -154,9 +154,44 @@
                                             </div>
 										</div>
 										<div class="tab-pane fade" id="pills-attributes" role="tabpanel" aria-labelledby="pills-attributes-tab">
-											<p>Pityful a rethoric question ran over her cheek, then she continued her way. On her way she met a copy. The copy warned the Little Blind Text, that where it came from it would have been rewritten a thousand times and everything that was left from its origin would be the word "and" and the Little Blind Text should turn around and return to its own, safe country.</p>
+											<button class="btn btn-primary btn-round ms-auto"data-bs-toggle="modal" data-bs-target="#variationModal">
+                                                Add Variations
+                                            </button>
+                                            <!-- Variation Creation Modal -->
+                                            <div class="modal fade" id="variationModal" tabindex="-1" aria-labelledby="variationModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content rounded-4 shadow-sm">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="variationModalLabel">Add Product Variation</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
 
-											<p> But nothing the copy said could convince her and so it didn’t take long until a few insidious Copy Writers ambushed her, made her drunk with Longe and Parole and dragged her into their agency, where they abused her for their</p>
+                                                <form action="/admin/variations" method="POST">
+                                                    <div class="modal-body">
+                                                    {{-- @csrf --}}
+
+                                                    <!-- Variation Name -->
+                                                    <div class="mb-3">
+                                                        <label for="variation_name" class="form-label">Variation Name</label>
+                                                        <input type="text" class="form-control" id="variation_name" name="variation_name" placeholder="e.g. Size, Color" required>
+                                                    </div>
+
+                                                    <!-- Variation Value -->
+                                                    <div class="mb-3">
+                                                        <label for="variation_value" class="form-label">Variation Value</label>
+                                                        <input type="text" class="form-control" id="variation_value" name="variation_value" placeholder="e.g. Large, Red" required>
+                                                    </div>
+
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Save Variation</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    </div>
+                                                </form>
+                                                </div>
+                                            </div>
+                                            </div>
 										</div>
 									</div>
                                 </div>
