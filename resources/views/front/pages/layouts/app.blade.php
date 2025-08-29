@@ -24,8 +24,7 @@
     <link rel="stylesheet" href="{{ asset('front-assets/css/slicknav.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('front-assets/css/style.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('front-assets/css/review.css') }}" type="text/css">
-
-    
+    <!-- Chatbot Styles -->    
 </head>
 
 <body>
@@ -263,6 +262,7 @@
             </div>
         </div>
     </div>    
+    
 
     <!-- Js Plugins -->
     <script src="{{ asset('front-assets/js/jquery-3.3.1.min.js') }}"></script>

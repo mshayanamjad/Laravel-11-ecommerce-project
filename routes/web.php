@@ -19,8 +19,7 @@ use App\Http\Controllers\front\ProfileController;
 use App\Http\Controllers\front\ReviewController;
 use App\Http\Controllers\front\ShopController;
 use App\Http\Controllers\front\WhishlistController;
-use App\Models\Order;
-use Carbon\Carbon;
+use App\Http\Controllers\AIRecommendationController;
 
 Route::get('/getSlug', function (Request $request) {
     $slug = $request->title ? Str::slug($request->title) : '';
@@ -35,12 +34,15 @@ Route::group(['prefix' => 'male-fashion'], function () {
 
     Route::name('front.')->group(function () {
         Route::get('/', [HomeController::class, 'home'])->name('home');
+        // Shop Controller Routes
         Route::get('/shop', [ShopController::class, 'shop'])->name('shop');
         Route::get('/shop/{slug}', [ShopController::class, 'product'])->name('product');
+        // Cart Controller Routes
         Route::get('/cart', [CartController::class, 'cart'])->name('cart');
         Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('addToCart');
         Route::post('/update-cart', [CartController::class, 'updateCart'])->name('updateCart');
         Route::post('/delete-cart', [CartController::class, 'deleteItem'])->name('deleteCartItem');
+        // Review Controller Routes
         Route::post('/', [ReviewController::class, 'store'])->name('reviewStore');
         Route::get('/edit', [ReviewController::class, 'edit'])->name('reviewEdit');
         Route::put('/update', [ReviewController::class, 'update'])->name('reviewUpdate');
@@ -55,23 +57,31 @@ Route::group(['prefix' => 'male-fashion'], function () {
             Route::post('verify-otp', [AuthController::class, 'verifyOtp'])->name('verifyOtp');
             Route::get('login', [AuthController::class, 'userLogin'])->name('userLogin');
             Route::post('authentication', [AuthController::class, 'userAuthentication'])->name('userAuthentication');
+            Route::post('/restore/{id}', [AuthController::class, 'restoreAccount'])->name('restore');
         });
     });
 
     Route::group(['middleware' => 'auth'], function () {
         Route::name('front.')->group(function () {
+            // Profile Controller Routes
             Route::get('profile', [ProfileController::class, 'userProfile'])->name('userProfile');
             Route::put('update-profile/{id}', [ProfileController::class, 'updateProfile'])->name('updateProfile');
             Route::get('orders-list', [ProfileController::class, 'orderList'])->name('orderList');
             Route::get('pending-orders-list', [ProfileController::class, 'orderPendingList'])->name('orderPendingList');
             Route::get('delivered-orders-list', [ProfileController::class, 'orderDeliveredList'])->name('orderDeliveredList');
             Route::get('/order-detail/{id}', [ProfileController::class, 'orderDetail'])->name('orderDetail');
+            // Auth Controller Routes
             Route::get('logout', [AuthController::class, 'logout'])->name('logout');
             Route::get('/change-password', [AuthController::class, 'changePassword'])->name('changePassword');
             Route::post('/change-password', [AuthController::class, 'changePasswordProcess'])->name('changePasswordProcess');
+            Route::get('/delete-account', [AuthController::class, 'deleteAcc'])->name('deleteAcc');
+            Route::delete('/delete-account-process', [AuthController::class, 'deleteAccProcess'])->name('deleteAccProcess');
+
+            // Whishlist Controller Routes
             Route::get('wishlist', [WhishlistController::class, 'viewWishlist'])->name('viewWishlist');
             Route::post('add-to-wishlist', [WhishlistController::class, 'addToWishlist'])->name('addToWishlist');
             Route::post('remove-to-wishlist', [WhishlistController::class, 'reomveWhishlistPro'])->name('reomveWhishlistPro');
+            // Checkout Controller Routes
             Route::get('checkout', [CheckoutController::class, 'viewCheckout'])->name('viewCheckout');
             Route::post('checkout', [CheckoutController::class, 'checkoutProcess'])->name('checkoutProcess');
             Route::post('order-summary', [CheckoutController::class, 'getOrderSummery'])->name('getOrderSummery');

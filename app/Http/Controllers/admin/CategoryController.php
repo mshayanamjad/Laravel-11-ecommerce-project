@@ -8,81 +8,28 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use App\Trait\CategoryList;
 
 class CategoryController extends Controller
 {
 
+    use CategoryList;
+
     public function active(Request $request)
     {
-        $query = Category::orderBy('id', 'asc')->where('status', 'active');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('name', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $categories = $query->paginate(10);
-        $count = Category::count();
-        $activeCount = Category::where('status', 'active')->count();
-        $blockCount = Category::where('status', 'block')->count();
-
-        $data = [
-            'categories' => $categories,
-            'count' => $count,
-            'activeCount' => $activeCount,
-            'blockCount' => $blockCount,
-        ];
-
+        $data = $this->getCategoryData($request, 'active');
         return view('admin.category.active', $data);
     }
 
     public function block(Request $request)
     {
-        $query = Category::orderBy('id', 'asc')->where('status', 'block');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('name', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $categories = $query->paginate(10);
-        $count = Category::count();
-        $activeCount = Category::where('status', 'active')->count();
-        $blockCount = Category::where('status', 'block')->count();
-
-        $data = [
-            'categories' => $categories,
-            'count' => $count,
-            'activeCount' => $activeCount,
-            'blockCount' => $blockCount,
-        ];
-
+        $data = $this->getCategoryData($request, 'block');
         return view('admin.category.block', $data);
     }
 
-
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $query = Category::orderBy('id', 'asc');
-
-        if (!empty($request->get('keyword'))) {
-            $query->where('name', 'like', '%' . $request->get('keyword') . '%');
-        }
-
-        $categories = $query->paginate(10);
-        $count = Category::count();
-        $activeCount = Category::where('status', 'active')->count();
-        $blockCount = Category::where('status', 'block')->count();
-
-        $data = [
-            'categories' => $categories,
-            'count' => $count,
-            'activeCount' => $activeCount,
-            'blockCount' => $blockCount,
-        ];
-
+        $data = $this->getCategoryData($request);
         return view('admin.category.list', $data);
     }
 

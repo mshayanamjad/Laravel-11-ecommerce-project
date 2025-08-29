@@ -1511,6 +1511,9 @@ ol {
 .product__details__pic .nav-tabs {
     border-bottom: none;
     width: 105px;
+    height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .product__details__pic .nav-tabs .nav-item {

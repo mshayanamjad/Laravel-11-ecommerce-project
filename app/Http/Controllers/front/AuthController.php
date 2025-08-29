@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Mail\OtpMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -115,40 +116,50 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        // Attempt to log in the user
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password,
-        ];
-
-        $remember = $request->has('remember');
-
-        if ($validator->passes()) {
-            if (Auth::attempt($credentials, $remember)) {
-
-                $user = Auth::user();
-
-                if ($user->role != 'customer') {
-                    Auth::logout(); // Log out the user immediately
-                    return redirect()->route('front.userLogin')
-                        ->with('error', 'You are not authorized to access this page');
-                }
-
-                if (session()->has('url.intended')) {
-                    return redirect(session()->get('url.intended'));
-                }
-
-                return redirect()->route('front.home');
-            }
-            // Make sure to use a complete route name here
+        if ($validator->fails()) {
             return redirect()->route('front.userLogin')
                 ->withInput()
-                ->with('error', 'Invalid Credentials');
+                ->withErrors($validator);
+        }
+
+        $credentials = $request->only('email', 'password');
+        $remember = $request->has('remember');
+
+        // ✅ Find the user using email instead of id
+        $user = User::withTrashed()->where('email', $request->email)->first();
+
+        // ✅ Check if user exists and is soft-deleted
+        if ($user && $user->trashed()) {
+            return redirect()->back()
+                ->with([
+                    'restore_option' => true,
+                    'restore_id' => $user->id // Store user ID for restoration
+                ])->withInput();
+        }
+
+        // ✅ Proceed with authentication
+        if (Auth::attempt($credentials, $remember)) {
+            $user = Auth::user();
+
+            if ($user->role !== 'customer') {
+                Auth::logout();
+                return redirect()->route('front.userLogin')
+                    ->with('error', 'You are not authorized to access this page');
+            }
+
+            if (session()->has('url.intended')) {
+                return redirect(session()->get('url.intended'));
+            }
+
+            return redirect()->intended(route('front.home'));
         }
 
         return redirect()->route('front.userLogin')
-            ->withInput()->withErrors($validator);
+            ->withInput()
+            ->with('error', 'Invalid Credentials');
     }
+
+
 
 
     public function logout()
@@ -157,8 +168,6 @@ class AuthController extends Controller
 
         return redirect()->route('front.userLogin')->with('success', 'You are logged out');
     }
-
-
 
     public function changePassword()
     {
@@ -199,5 +208,54 @@ class AuthController extends Controller
                 'errors' => $validator->errors()
             ]);
         }
+    }
+
+
+    public function deleteAcc()
+    {
+        return view('front.profile.delete_account');
+    }
+
+    public function deleteAccProcess(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'deletion_password' => 'required',
+        ]);
+
+        if ($validator->passes()) {
+            $user = User::select('id', 'password', 'status')->where('id', Auth::id())->first();
+
+            if (!$user || !Hash::check($request->deletion_password, $user->password)) {
+                session()->flash('error', 'Password is incorrect');
+                return response()->json([
+                    'status' => false,
+                ]);
+            }
+
+            $user->delete(); // Soft delete the user
+
+            session()->flash('success', 'User Deleted Successfully');
+            return redirect()->route('front.userLogin')->with('success', 'User Deleted Successfully');
+        } else {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+    }
+
+
+    public function restoreAccount($id)
+    {
+        $user = User::withTrashed()->find($id);
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found!');
+        }
+
+        if (!$user->trashed()) {
+            return redirect()->back()->with('error', 'Your account is already active.');
+        }
+
+        $user->restore();
+
+        return redirect()->route('front.userLogin')->with('success', 'Your account has been restored! You can now log in.');
     }
 }

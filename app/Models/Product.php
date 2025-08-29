@@ -7,7 +7,9 @@ use Stripe\Customer;
 
 class Product extends Model
 {
-    protected $fillable = ['barcode'];
+    protected $fillable = ['title', 'slug', 'price', 'description', 'image', 
+    'user_id', 'qty', 'status', 'barcode'];
+    
 
     public function categories()
     {
@@ -39,4 +41,5 @@ class Product extends Model
     {
         return $this->hasMany(CustomerReview::class);
     }
+
 }

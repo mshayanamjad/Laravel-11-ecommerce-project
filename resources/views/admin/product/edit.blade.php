@@ -294,7 +294,7 @@
                                     <div class="card-body p-3">
                                         <div class="featured-img position-relative">
                                             <div id="image-preview" class="text-center">
-                                                <img src="{{ asset('uploads/product-image/' . $product->image) }}" alt="" style="height:200px; object-fit:cover;">
+                                                <img src="{{ asset('uploads/product-image/' . $product->image) }}" alt="" style="width:100%; height:200px; object-fit:cover;">
                                             </div>
                                             <input type="file" name="image" id="image">
                                             <a href="#">+Add Featured Image</a>
