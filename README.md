@@ -1,66 +1,179 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel 11 E‑Commerce Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern, scalable e‑commerce application built with **Laravel 11**, offering secure authentication, product management, shopping cart, Stripe checkout, and admin dashboard functionality. Powered by MySQL and modern frontend tools.
 
-## About Laravel
+## Table of Contents
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Features](#features)  
+- [Tech Stack](#tech-stack)  
+- [Getting Started](#getting-started)  
+  - [Prerequisites](#prerequisites)  
+  - [Installation](#installation)  
+  - [Database Setup](#database-setup)  
+  - [Running the App](#running-the-app)  
+- [Usage](#usage)  
+- [Admin Dashboard](#admin-dashboard)  
+- [Testing](#testing)  
+- [Contributing](#contributing)  
+- [License](#license)  
+- [Contact](#contact)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+- **Secure user authentication** (registration, login, password reset)  
+- **Product management** (CRUD operations via admin panel)  
+- **Shopping cart system** with session persistence  
+- **Stripe-powered checkout** integration  
+- **Admin dashboard** for managing users, orders, products, etc.  
+- **Scalable architecture** using Laravel, MySQL, and modern frontend stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Tech Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Backend**: PHP 8+, Laravel 11  
+- **Database**: MySQL  
+- **Frontend**: Blade, Tailwind CSS, Vite, JavaScript  
+- **Payment**: Stripe API  
+- **Containerization**: Dockerfile to build and manage development environment
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Getting Started
 
-### Premium Partners
+### Prerequisites
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Ensure your system has:
+
+- PHP 8+  
+- Composer  
+- Node.js & npm  
+- MySQL (or compatible)  
+- Docker (optional, if using Docker setup)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/mshayanamjad/Laravel-11-ecommerce-project.git
+   cd Laravel-11-ecommerce-project
+   ```
+
+2. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
+
+4. Install frontend dependencies and build assets:
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+### Database Setup
+
+1. In your `.env`, configure your database credentials:
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database_name
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+   ```
+
+2. If you have a SQL dump (like `male_fashion.sql`), import it:
+   ```bash
+   mysql -u your_username -p your_database_name < male_fashion.sql
+   ```
+
+3. Run migrations and seeders:
+   ```bash
+   php artisan migrate --seed
+   ```
+
+### Running the App
+
+- Without Docker:
+  ```bash
+  php artisan serve
+  ```
+
+- With Docker (setup via `Dockerfile`):
+  ```bash
+  docker build -t laravel-ecommerce .
+  docker run --rm -p 8000:8000 laravel-ecommerce
+  ```
+
+Access the application at: `http://localhost:8000`
+
+---
+
+## Usage
+
+- Browse products and add them to your shopping cart  
+- Head to the checkout page and complete your purchases via Stripe  
+- Users can register, login, and manage their accounts
+
+---
+
+## Admin Dashboard
+
+- Accessible via: `http://localhost:8000/admin` (or your configured route)  
+- Manage products, orders, users, and view metrics  
+- Use login credentials provided in `login_details.txt` (ensure this file remains secure)
+
+---
+
+## Testing
+
+Run application tests using PHPUnit:
+```bash
+php artisan test
+```
+
+---
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Contributions are welcome! Please:
 
-## Code of Conduct
+1. Fork the repository  
+2. Create a new feature branch: `git checkout -b feature/YourFeature`  
+3. Commit your changes: `git commit -m "Add YourFeature"`  
+4. Push to your branch and open a pull request
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-source under the **MIT License**. See the [LICENSE](LICENSE) file for full details.
+
+---
+
+## Contact
+
+For questions or feedback:  
+**Maintainer**: mshayanamjad  
+**GitHub Profile**: https://github.com/mshayanamjad
+
+---
+
+## Additional Notes
+
+- If using Stripe, make sure to set the required keys in `.env`:  
+  ```
+  STRIPE_KEY=your_publishable_key  
+  STRIPE_SECRET=your_secret_key  
+  ```
+
+- Customize UI via resources in `resources/views`, `resources/css`, or `resources/js`.
+
+- The project includes a `Dockerfile`—let me know if you’d like a full `docker-compose.yml` setup too!
