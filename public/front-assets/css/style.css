@@ -949,7 +949,7 @@ ol {
     background: #111111;
 }
 
-.product__item.sale .product__item__text .rating i {
+.product__item .product__item__text .rating i {
     color: #f7941d;
 }
 
@@ -1089,7 +1089,7 @@ ol {
 
 .product__item__text .rating i {
     font-size: 14px;
-    color: #b7b7b7;
+    color: #f7941d;
     margin-right: -5px;
 }
 

@@ -34,6 +34,8 @@ Route::group(['prefix' => 'male-fashion'], function () {
 
     Route::name('front.')->group(function () {
         Route::get('/', [HomeController::class, 'home'])->name('home');
+        Route::get('/about', [HomeController::class, 'about'])->name('about');
+        Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
         // Shop Controller Routes
         Route::get('/shop', [ShopController::class, 'shop'])->name('shop');
         Route::get('/shop/{slug}', [ShopController::class, 'product'])->name('product');

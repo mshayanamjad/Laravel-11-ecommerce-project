@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.auth' => \App\Http\Middleware\AdminAuthenticate::class,
         ]);
 
+        // Apply globally (every request will trigger it)
+        // $middleware->append(\App\Http\Middleware\ClearCacheMiddleware::class);
 
         $middleware->redirectTo(
             guests: '/male-fashion/login',

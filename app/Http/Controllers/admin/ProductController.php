@@ -119,7 +119,7 @@ class ProductController extends Controller
 
             // Check if SKU is set, if not generate automatically
             if (empty($request->sku)) {
-                $product->sku = 'SKU-' . now()->format('Ymd') . '-' . strtoupper(substr(uniqid(), -3));
+                $product->sku = 'SKU-' . strtoupper(substr(uniqid(), -3));
             } else {
                 $product->sku = $request->sku;
             }

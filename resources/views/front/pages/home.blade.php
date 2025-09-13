@@ -1,7 +1,7 @@
 @extends('front.pages.layouts.app')
 
 @section('content')
-    
+
 <!-- Hero Section Begin -->
 <section class="hero">
     <div class="hero__slider owl-carousel">
@@ -16,7 +16,7 @@
                                 <span class="current-year"></span>
                             </h2>
                             <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                            commitment to exceptional quality.</p>
+                                commitment to exceptional quality.</p>
                             <a href="{{ route('front.shop') }}" class="primary-btn">Shop now <span class="arrow_right"></span></a>
                             <div class="hero__social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
@@ -29,6 +29,7 @@
                 </div>
             </div>
         </div>
+
         <div class="hero__items set-bg" data-setbg="{{ asset('front-assets/img/hero/hero-2.jpg') }}">
             <div class="container">
                 <div class="row">
@@ -40,7 +41,7 @@
                                 <span class="current-year"></span>
                             </h2>
                             <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                            commitment to exceptional quality.</p>
+                                commitment to exceptional quality.</p>
                             <a href="{{ route('front.shop') }}" class="primary-btn">Shop now <span class="arrow_right"></span></a>
                             <div class="hero__social">
                                 <a href="#"><i class="fa fa-facebook"></i></a>
@@ -117,13 +118,14 @@
                 </ul>
             </div>
         </div>
+
         <div class="row product__filter">
+            {{-- Best Sellers --}}
             @if ($products->isNotEmpty()) 
-                @foreach ($products->take(8) as  $product) 
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                @foreach ($products as $product) 
+                    <div class="col-lg-3 col-md-6 col-sm-6 mix new-arrivals">
                         <div class="product__item">
                             <div class="product__item__pic set-bg" data-setbg="{{ asset('uploads/product-image/' . $product->image) }}">
-                                {{-- <span class="label">New</span> --}}
                                 <ul class="product__hover">
                                     @if (whishlistedProducts()->contains('product_id', $product->id))
                                         <li><a href="javascript:void(0)" id="whishlist-{{ $product->id }}" onclick="whishlist({{ $product->id }})"><img src="{{ asset('front-assets/img/icon/heart-filled.png') }}" width="36" alt=""></a></li>
@@ -136,48 +138,36 @@
                             </div>
                             <div class="product__item__text">
                                 <h6 class="product-title"><a href="{{ route('front.product', $product->slug) }}">{{ $product->title }}</a></h6>
-                                {{-- <a href="#" class="add-cart">+ Add To Cart</a> --}}
+                                @php
+                                    $averageRating = getAverageRating($product->id);
+                                @endphp
                                 <div class="rating">
-                                    @php
-                                        $averageRating = getAverageRating($product->id);
-                                    @endphp
                                     @for ($i = 1; $i <= 5; $i++)
                                         @if ($i <= floor($averageRating))
-                                            <i class="fa fa-star"></i> <!-- Full Star -->
+                                            <i class="fa fa-star"></i>
                                         @else
-                                            <i class="fa fa-star-o"></i> <!-- Empty Star -->
+                                            <i class="fa fa-star-o"></i>
                                         @endif
                                     @endfor
                                 </div>
                                 @if ($product->sale_price > 0)
                                     <h5>
                                         ${{ $product->sale_price }} 
-                                        <span>${{ $product->price}}</span>
+                                        <span>${{ $product->price }}</span>
                                     </h5>
                                 @else
-                                    <h5>
-                                        ${{ $product->price }} 
-                                    </h5>
+                                    <h5>${{ $product->price }}</h5>
                                 @endif
-                                {{-- <div class="product__color__select">
-                                    <label for="pc-1">
-                                        <input type="radio" id="pc-1">
-                                    </label>
-                                    <label class="active black" for="pc-2">
-                                        <input type="radio" id="pc-2">
-                                    </label>
-                                    <label class="grey" for="pc-3">
-                                        <input type="radio" id="pc-3">
-                                    </label>
-                                </div> --}}
                             </div>
                         </div>
                     </div>
-                    @endforeach 
-                @endif
+                @endforeach 
+            @endif
+
+            {{-- Hot Sales --}}
             @if ($productsOnSale->isNotEmpty())
-                @foreach ($productsOnSale->take(8) as $productOnSale)
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-sales">
+                @foreach ($productsOnSale as $productOnSale)
+                    <div class="col-lg-3 col-md-6 col-sm-6 mix hot-sales">
                         <div class="product__item sale">
                             <div class="product__item__pic set-bg" data-setbg="{{ asset('uploads/product-image/' . $productOnSale->image) }}">
                                 <span class="label">Sale</span>
@@ -193,46 +183,31 @@
                             </div>
                             <div class="product__item__text">
                                 <h6 class="product-title"><a href="{{ route('front.product', $productOnSale->slug) }}">{{ $productOnSale->title }}</a></h6>
-                                {{-- <a href="#" class="add-cart">+ Add To Cart</a> --}}
+                                @php
+                                    $averageRating = getAverageRating($productOnSale->id);
+                                @endphp
                                 <div class="rating">
-                                    @php
-                                        $averageRating = getAverageRating($productOnSale->id);
-                                    @endphp
                                     @for ($i = 1; $i <= 5; $i++)
                                         @if ($i <= floor($averageRating))
-                                            <i class="fa fa-star"></i> <!-- Full Star -->
+                                            <i class="fa fa-star"></i>
                                         @else
-                                            <i class="fa fa-star-o"></i> <!-- Empty Star -->
+                                            <i class="fa fa-star-o"></i>
                                         @endif
                                     @endfor
                                 </div>
                                 @if ($productOnSale->sale_price > 0)
                                     <h5>
                                         ${{ $productOnSale->sale_price }} 
-                                        <span>${{ $productOnSale->price}}</span>
+                                        <span>${{ $productOnSale->price }}</span>
                                     </h5>
                                 @else
-                                    <h5>
-                                        ${{ $productOnSale->price }} 
-                                    </h5>
+                                    <h5>${{ $productOnSale->price }}</h5>
                                 @endif
-                                {{-- <div class="product__color__select">
-                                    <label for="pc-4">
-                                        <input type="radio" id="pc-4">
-                                    </label>
-                                    <label class="active black" for="pc-5">
-                                        <input type="radio" id="pc-5">
-                                    </label>
-                                    <label class="grey" for="pc-6">
-                                        <input type="radio" id="pc-6">
-                                    </label>
-                                </div> --}}
                             </div>
                         </div>
                     </div>
                 @endforeach
             @endif
-
         </div>
     </div>
 </section>
@@ -289,7 +264,7 @@
                 <div class="instagram__text">
                     <h2>Instagram</h2>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                    labore et dolore magna aliqua.</p>
+                        labore et dolore magna aliqua.</p>
                     <h3>#Male_Fashion</h3>
                 </div>
             </div>
@@ -344,4 +319,5 @@
     </div>
 </section>
 <!-- Latest Blog Section End -->
+
 @endsection

@@ -127,9 +127,8 @@
                         <ul>
                             <li class=""><a href="{{ route('front.home') }}">Home</a></li>
                             <li><a href="{{ route('front.shop') }}">Shop</a></li>
-                            <li><a href="./about.html">About Us</a></li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="./contact.html">Contacts</a></li>
+                            <li><a href="{{ route('front.about') }}">About Us</a></li>
+                            <li><a href="{{ route('front.contact') }}">Contact</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -150,8 +149,13 @@
                             $cartContent = Cart::content();
                         ?>
                         @if($cartContent)
-                            <a onclick="openCart()" id="cart-icon" class="cart-img" href="javascript:void(0)"><img src="{{ asset('front-assets/img/icon/cart.png') }}" alt=""> <span>{{ Cart::count() }}</span></a>
-                            <div class="price">${{ cartTotal() }}</div>
+                             <a onclick="openCart()" id="cart-icon" class="cart-img" href="javascript:void(0)">
+                                <div style="display: inline-block; position: relative; margin-right: 25px;">
+                                    <img src="{{ asset('front-assets/img/icon/cart.png') }}" alt=""> 
+                                    <span>{{ Cart::count() }}</span>
+                                </div>
+                                <div class="price ms-4">${{ cartTotal() }}</div>
+                            </a>
                         @endif
                     </div>
                 </div>

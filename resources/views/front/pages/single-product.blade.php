@@ -18,7 +18,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-3">
-                        <ul class="nav nav-tabs" role="tablist">
+                        <ul class="nav nav-tabs custom-scrollbar" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" data-toggle="tab" href="#tabs-0" role="tab">
                                     <div class="product__thumb__pic set-bg"

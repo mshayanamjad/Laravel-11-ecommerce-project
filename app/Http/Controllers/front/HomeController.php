@@ -11,14 +11,17 @@ class HomeController extends Controller
     public function home()
     {
         $products = Product::where('status', 'publish')
-            ->whereNull('sale_price') // or ->where('sale_price', 0)
             ->latest()
+            ->whereNull('sale_price') // or ->where('sale_price', 0)
+            ->take(8)
             ->get();
 
 
         $productsOnSale = Product::where('status', 'publish')
             ->whereNotNull('sale_price')
             ->whereColumn('sale_price', '<', 'price') // Ensure sale price is lower than price
+            ->latest()
+            ->take(8)
             ->get();
 
         // Get the product with the highest discount (must be at least 50% off)
@@ -34,5 +37,13 @@ class HomeController extends Controller
         ];
 
         return view('front.pages.home', $data);
+    }
+
+    public function about() {
+        return view('front.pages.about');
+    }
+    
+    public function contact() {
+        return view('front.pages.contact');
     }
 }
