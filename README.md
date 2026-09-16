@@ -92,7 +92,39 @@ The commands below assume the project is located at `D:\Xampp\htdocs\laravel` an
 
 For local development, the default mailer can remain set to `log`. Emails will be written to `storage/logs/laravel.log` instead of being sent.
 
-For real email delivery, configure `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, and `MAIL_FROM_ADDRESS` in `.env`.
+Set these values in `.env` for real email delivery:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-gmail-address@gmail.com
+MAIL_PASSWORD=your-16-character-app-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=your-gmail-address@gmail.com
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+#### Gmail App Password Setup
+
+Gmail does not allow Laravel to authenticate with your normal Google account password. Use a Google app password instead:
+
+1. Sign in to the Google account that will send application emails.
+2. Open [Google Account Security](https://myaccount.google.com/security).
+3. Enable **2-Step Verification** if it is not already enabled.
+4. Open **App passwords** in the Google account security settings.
+5. Create a new app password, give it a name such as `Male Fashion Laravel`, and click **Create**.
+6. Copy the generated 16-character password. Use it as `MAIL_PASSWORD` without spaces.
+7. Set `MAIL_USERNAME` and `MAIL_FROM_ADDRESS` to the same Gmail address, then save `.env`.
+8. Clear cached Laravel configuration:
+
+    ```bash
+    php artisan config:clear
+    ```
+
+9. Place an order or trigger another email action to test delivery. Check `storage/logs/laravel.log` if the message fails.
+
+For Google Workspace accounts, an administrator may need to allow app passwords. Never commit `.env` or share the app password; it grants access to send mail through the Google account. If the app password is revoked, generate a new one and update `MAIL_PASSWORD`.
 
 ### Stripe
 
