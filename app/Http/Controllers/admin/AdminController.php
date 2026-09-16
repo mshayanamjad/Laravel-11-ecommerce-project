@@ -120,14 +120,16 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        // Get the last 7 days as an array
+        $admin = Auth::guard('admin')->user();
+        $notifications = $admin->notifications()->latest()->take(8)->get();
+        $unreadNotifications = $admin->unreadNotifications->count();
+
         $dates = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i)->format('d');
-            $dates[$date] = 0; // Default sales value
+            $dates[$date] = 0;
         }
 
-        // Fetch daily sales for the last 7 days
         $salesData = Order::select(
             DB::raw("DATE_FORMAT(created_at, '%d') as date"),
             DB::raw('SUM(grand_total) as total_sales')
@@ -137,12 +139,10 @@ class AdminController extends Controller
             ->orderBy('date', 'ASC')
             ->get();
 
-        // Merge sales data with all dates
         foreach ($salesData as $sale) {
             $dates[$sale->date] = $sale->total_sales;
         }
 
-        // Convert to an array of objects (or use as needed)
         $dailySales = [];
         foreach ($dates as $date => $totalSales) {
             $dailySales[] = ['date' => $date, 'total_sales' => $totalSales];
@@ -151,9 +151,11 @@ class AdminController extends Controller
         $data = [
             'totalOrders' => Order::count(),
             'totalSales' => Order::sum('grand_total'),
+            'customers' => User::where('role', 'customer')->count(),
+            'notifications' => $notifications,
+            'unreadNotifications' => $unreadNotifications,
             'dailySales' => $dailySales,
             'dailySalesCount' => Order::whereDate('created_at', Carbon::today())->sum('grand_total'),
-            'customers' => User::where('role', 'customer')->count(),
         ];
         return view('admin.dashboard.dashboard', $data);
     }

@@ -99,30 +99,40 @@
     <div class="row">
       <div class="col-md-8">
         <div class="card">
-          <div class="card-header">
-            <div class="card-head-row">
-              <div class="card-title">Sale Statistics</div>
-              <div class="card-tools">
-                <a href="#" class="btn btn-label-success btn-round btn-sm me-2">
-                  <span class="btn-label">
-                    <i class="fa fa-pencil"></i>
-                  </span>
-                  Export
-                </a>
-                <a href="#" class="btn btn-label-info btn-round btn-sm">
-                  <span class="btn-label">
-                    <i class="fa fa-print"></i>
-                  </span>
-                  Print
-                </a>
-              </div>
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <div class="card-title mb-1">Admin Notifications</div>
+              <small class="text-muted">
+                {{ $unreadNotifications }} unread {{ $unreadNotifications === 1 ? 'notification' : 'notifications' }}
+              </small>
             </div>
+            <a href="{{ route('admin.notifications') }}" class="btn btn-primary btn-sm">
+              <i class="fa fa-list me-1"></i> View all
+            </a>
           </div>
-          <div class="card-body">
-            <div class="chart-container" style="min-height: 375px"><div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
-              <canvas id="statisticsChart" style="display: block; width: 764px; height: 375px;" width="764" height="375" class="chartjs-render-monitor"></canvas>
-            </div>
-            {{-- <div id="myChartLegend"></div> --}}
+          <div class="card-body p-0">
+            @forelse ($notifications as $notification)
+              <a href="{{ route('admin.notifications.read', ['id' => $notification->id]) }}" class="d-flex align-items-start gap-3 p-3 border-bottom text-decoration-none {{ $notification->read_at ? '' : 'bg-light' }}">
+                <span class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 36px; height: 36px; flex: 0 0 36px;">
+                  <i class="fa {{ data_get($notification, 'data.type') === 'order' ? 'fa-shopping-cart' : 'fa-bell' }}"></i>
+                </span>
+                <span class="flex-grow-1">
+                  <span class="d-flex justify-content-between align-items-start gap-2">
+                    <strong class="text-dark">{{ data_get($notification, 'data.title', 'Notification') }}</strong>
+                    @if (is_null($notification->read_at))
+                      <span class="badge bg-primary rounded-pill">New</span>
+                    @endif
+                  </span>
+                  <span class="d-block text-muted small mt-1">{{ data_get($notification, 'data.message', 'No message') }}</span>
+                  <span class="d-block text-muted small mt-1">{{ $notification->created_at->diffForHumans() }}</span>
+                </span>
+              </a>
+            @empty
+              <div class="p-5 text-center text-muted">
+                <i class="fa fa-check-circle text-success mb-2" style="font-size: 28px;"></i>
+                <p class="mb-0">You are all caught up.</p>
+              </div>
+            @endforelse
           </div>
         </div>
       </div>
@@ -156,127 +166,34 @@
 @endsection
 @section('customJs')
 <script>
-let today = new Date();
-let startDate = new Date();
-startDate.setDate(today.getDate() - 6); // Get 6 days ago (since today is included)
+  const salesData = @json($dailySales);
+  const dailySalesChart = document.getElementById('dailySalesChart');
 
-// Array of month names
-const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-];
-
-// Format start and end date
-let startDay = startDate.getDate();
-let startMonth = monthNames[startDate.getMonth()];
-
-let endDay = today.getDate();
-let endMonth = monthNames[today.getMonth()];
-
-// Construct the date range string
-let dateRange = `${startMonth} ${startDay} - ${endMonth} ${endDay}`;
-
-// Select all elements with ID "this_month" and update them
-document.querySelectorAll("#this_month").forEach(element => {
-    element.textContent = dateRange;
-});
-
-
-  var salesData = @json($dailySales);  // Prepare sales data for export
-  var dailyLabels = salesData.map((sale) => sale.date); // Example labels
-  var dailySalesData = salesData.map((sale) => sale.total_sales); // Example dynamic sales data
-
-  var dailySalesChart = document
-    .getElementById("dailySalesChart")
-    .getContext("2d");
-
-  var myDailySalesChart = new Chart(dailySalesChart, {
-      type: "line",
+  if (dailySalesChart) {
+    new Chart(dailySalesChart.getContext('2d'), {
+      type: 'line',
       data: {
-          labels: dailyLabels,
-          datasets: [
-              {
-                  label: "Sales Analytics",
-                  fill: !0,
-                  backgroundColor: "rgba(255,255,255,0.2)",
-                  borderColor: "#fff",
-                  borderCapStyle: "butt",
-                  borderDash: [],
-                  borderDashOffset: 0,
-                  pointBorderColor: "#fff",
-                  pointBackgroundColor: "#fff",
-                  pointBorderWidth: 1,
-                  pointHoverRadius: 5,
-                  tension: 0.4, // Smooths the line
-                  pointHoverBackgroundColor: "#fff",
-                  pointHoverBorderColor: "#fff",
-                  pointHoverBorderWidth: 0,
-                  pointRadius: 1,
-                  pointHitRadius: 5,
-                  data: dailySalesData,
-              },
-          ],
+        labels: salesData.map((sale) => sale.date),
+        datasets: [{
+          label: 'Sales',
+          data: salesData.map((sale) => sale.total_sales),
+          fill: true,
+          backgroundColor: 'rgba(255, 255, 255, 0.2)',
+          borderColor: '#fff',
+          tension: 0.4,
+          pointRadius: 2,
+          pointBackgroundColor: '#fff'
+        }]
       },
       options: {
-          maintainAspectRatio: false,
-          layout: {
-              padding: {
-                  left: 20,  // ⬅️ Adds left padding
-                  right: 20, // ➡️ Adds right padding
-                  bottom: 20,
-              },
-          },
-          plugins: {
-              legend: {
-                  display: false,
-              },
-          },
-          animation: {
-              easing: "easeInOutBack",
-          },
-          scales: {
-              y: {
-                  ticks: {
-                      color: "#fff",
-                      beginAtZero: true,
-                  },
-                  grid: {
-                      display: false, // ❌ Removes y-axis grid lines
-                      drawBorder: false,
-                  },
-              },
-              x: {
-                  ticks: {
-                      color: "#fff",
-                  },
-                  grid: {
-                      display: false, // ❌ Removes x-axis grid lines
-                      drawBorder: false,
-                  },
-              },
-          },
-      },
-  });
-
-  document.getElementById("exportExcel").addEventListener("click", function () {
-
-    // Create an array of objects for Excel
-    let dataForExcel = salesData.map(sale => ({
-        "Date": sale.date,
-        "Total Sales (USD)": sale.total_sales
-    }));
-
-    // Convert data to a worksheet
-    let worksheet = XLSX.utils.json_to_sheet(dataForExcel);
-
-    // Create a workbook and append the worksheet
-    let workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Report");
-
-    // Export the workbook to an Excel file
-    XLSX.writeFile(workbook, "Last_7_Days_Sales.xlsx");
-});
-
-
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#fff' }, grid: { display: false } },
+          x: { ticks: { color: '#fff' }, grid: { display: false } }
+        }
+      }
+    });
+  }
 </script>
 @endsection

@@ -1052,6 +1052,7 @@ ol {
     background: #ffffff;
     padding: 10px;
     display: inline-block;
+    width: 35px;
 }
 
 .product__item__text {

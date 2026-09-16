@@ -20,7 +20,7 @@
                 <div class="row">
                     @if ($wishlists->isNotEmpty())
                         @foreach ($wishlists as $wishlist)
-                            <div class="col-md-4">
+                            <div class="col-md-4" id="wishlist-item-{{ $wishlist->product->id }}">
                                 <div class="card card-post card-round">
                                 <img class="card-img-top" src="{{ asset('uploads/product-image/'. $wishlist->product->image) }}" alt="Card image" style="width: 100%; height: 250px; object-fit: cover; object-position: center;">
                                 <div class="card-body">
@@ -57,7 +57,10 @@
             },
             success: function(response) {
                 if (response.status == true) {
-                    window.location.href = "{{ route('front.viewWishlist') }}";
+                    $('#wishlist-item-' + id).remove();
+                    if ($('.card').length === 0) {
+                        $('.row').append('<p>No wishlist Product found</p>');
+                    }
                 } else {
                     alert(response.message);
                 }

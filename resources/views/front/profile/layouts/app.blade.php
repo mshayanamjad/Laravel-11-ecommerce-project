@@ -133,6 +133,62 @@
                 font-weight: 500 !important;
                 font-size: 16px !important;
             }
+
+            .customer-notification-link {
+                position: relative;
+                display: inline-flex;
+                width: 38px;
+                height: 38px;
+                align-items: center;
+                justify-content: center;
+                margin-right: 12px;
+                color: #1f2937 !important;
+                border-radius: 50%;
+                font-size: 17px;
+                transition: background-color .2s ease, color .2s ease;
+            }
+
+            .customer-notification-link:hover,
+            .customer-notification-link:focus {
+                color: #1572e8 !important;
+                background: #eef5ff;
+                outline: none;
+            }
+
+            .customer-notification-link .notification-badge {
+                position: absolute;
+                top: 0;
+                right: -1px;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 4px;
+                border: 2px solid #fff;
+                border-radius: 50%;
+                background: #e74c3c;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 14px;
+                text-align: center;
+            }
+
+            .customer-notification-menu {
+                width: 340px;
+                max-width: calc(100vw - 30px);
+                padding: 0;
+                overflow: hidden;
+                border: 1px solid #e9ecef;
+                border-radius: 10px;
+                box-shadow: 0 12px 30px rgba(0, 0, 0, .16);
+            }
+
+            .customer-notification-menu .dropdown-item {
+                white-space: normal;
+            }
+
+            .customer-notification-menu .dropdown-item:hover {
+                background: #f8f9fa;
+            }
         
             @media (max-width: 480px) {
                 .order-info {
@@ -203,6 +259,49 @@
                                     </form>
                                 </ul>
                             </li>
+                            @php
+                                $customerUnreadNotifications = auth()->user()->unreadNotifications;
+                                $customerNotifications = auth()->user()->notifications()->latest()->take(5)->get();
+                            @endphp
+                            <li class="nav-item dropdown hidden-caret">
+                                <a class="customer-notification-link dropdown-toggle" href="#" id="customerNotificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                                    <i class="fa fa-bell"></i>
+                                    @if ($customerUnreadNotifications->count() > 0)
+                                        <span class="notification-badge">{{ $customerUnreadNotifications->count() }}</span>
+                                    @endif
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end customer-notification-menu animated fadeIn" aria-labelledby="customerNotificationDropdown">
+                                    <li class="px-3 py-3 border-bottom">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <strong class="text-dark">Notifications</strong>
+                                            @if ($customerUnreadNotifications->count() > 0)
+                                                <span class="badge bg-primary rounded-pill">{{ $customerUnreadNotifications->count() }} new</span>
+                                            @endif
+                                        </div>
+                                    </li>
+                                    @forelse ($customerNotifications as $notification)
+                                        <li>
+                                            <a class="dropdown-item py-2" href="{{ route('front.notifications.read', ['id' => $notification->id]) }}">
+                                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                                    <div>
+                                                        <div class="small fw-bold text-dark">{{ data_get($notification, 'data.title', 'Notification') }}</div>
+                                                        <div class="small text-muted">{{ Str::limit(data_get($notification, 'data.message', 'No message'), 60) }}</div>
+                                                        <div class="small text-muted mt-1">{{ $notification->created_at->diffForHumans() }}</div>
+                                                    </div>
+                                                    @if (is_null($notification->read_at))
+                                                        <span class="badge bg-primary rounded-pill">New</span>
+                                                    @endif
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @empty
+                                        <li><span class="dropdown-item text-muted text-center py-3">No notifications yet</span></li>
+                                    @endforelse
+                                    <li class="border-top">
+                                        <a class="dropdown-item text-center small fw-bold text-primary py-3" href="{{ route('front.notifications') }}">View all notifications</a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown"  href="#" aria-expanded="false" >
                                     <div class="avatar-sm d-flex justify-content-center align-items-center" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; font-size: 16px; font-weight: bold; color: white;">
@@ -261,25 +360,24 @@
                 <nav class="pull-left">
                     <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="http://www.themekita.com">
-                        ThemeKita
+                        <a class="nav-link" href="{{ route('front.home') }}">
+                        Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"> Help </a>
+                        <a class="nav-link" href="{{ route('front.shop') }}"> Shop </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"> Licenses </a>
+                        <a class="nav-link" href="{{ route('front.notifications') }}"> Notifications </a>
                     </li>
                     </ul>
                 </nav>
                 <div class="copyright">
-                    2024, made with <i class="fa fa-heart heart text-danger"></i> by
-                    <a href="http://www.themekita.com">ThemeKita</a>
+                    © {{ date('Y') }} Male Fashion Store.
+                    All rights reserved.
                 </div>
                 <div>
-                    Distributed by
-                    <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
+                    Your account dashboard for orders, wishlist, and profile updates.
                 </div>
                 </div>
             </footer>

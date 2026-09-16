@@ -10,11 +10,15 @@ use App\Models\Product;
 use App\Models\Country;
 use App\Models\Shipping;
 use App\Models\OrderItem;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\CustomerAddress;
 use App\Http\Controllers\Controller;
+use App\Notifications\AdminNewOrder;
+use App\Notifications\CustomerOrderPlaced;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Gloudemans\Shoppingcart\Facades\Cart;
 
@@ -50,33 +54,25 @@ class CheckoutController extends Controller
         $totalShippingCharge = 0;
         $grandTotal = 0;
 
-        // Claculate Shipping
+        foreach (Cart::content() as $item) {
+            $totalQty += $item->qty;
+        }
+
+        // Calculate shipping, defaulting to zero when no rate is configured.
         if ($customerAddress != '') {
             $userCountry = $customerAddress->country_id;
             $shippingInfo = Shipping::where('country_id', $userCountry)->first();
-
-            $subTotal = cartTotal();
-
-            foreach (Cart::content() as $item) {
-                $totalQty += $item->qty;
-            }
-            // echo $shippingInfo->amount;
-            if ($shippingInfo != null) {
-                $totalShippingCharge = $totalQty * $shippingInfo->amount;
-                $grandTotal = cartTotal() + $totalShippingCharge;
-            }
         }
 
         $subTotal = cartTotal();
-        if ($shippingInfo != null) {
-            $shipping = $totalQty * $shippingInfo->amount;
-        } else {
+        if ($shippingInfo === null) {
             $shippingInfo = Shipping::where('country_id', 'rest_of_world')->first();
-
-            $shipping = $totalQty * $shippingInfo->amount;
         }
 
-        $grandTotal = $subTotal + $shipping;
+        $totalShippingCharge = $shippingInfo
+            ? $totalQty * $shippingInfo->amount
+            : 0;
+        $grandTotal = $subTotal + $totalShippingCharge;
 
         $data = [
             'countries' => $countries,
@@ -239,12 +235,25 @@ class CheckoutController extends Controller
         // Step 8: Clear Cart & Return Response
         Cart::destroy();
 
+        $user->notify(new CustomerOrderPlaced($order));
+
+        User::where('role', 'admin')->get()->each(function ($admin) use ($order) {
+            $admin->notify(new AdminNewOrder($order));
+        });
+
         $orderData = [
             'order' => $order,
             'mailSubject' => 'Order Information'
         ];
 
-        Mail::to($order->email)->send(new OrderMail($orderData));
+        try {
+            Mail::to($order->email)->send(new OrderMail($orderData));
+        } catch (\Throwable $exception) {
+            Log::error('Order confirmation email could not be sent.', [
+                'order_id' => $order->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
 
         return response()->json([
             'status' => true,
@@ -288,7 +297,9 @@ class CheckoutController extends Controller
             } else {
                 $shippingInfo = Shipping::where('country_id', 'rest_of_world')->first();
 
-                $shippingCharge = $totalQty * $shippingInfo->amount;
+                $shippingCharge = $shippingInfo
+                    ? $totalQty * $shippingInfo->amount
+                    : 0;
                 $grandTotal = $subTotal + $shippingCharge;
 
                 return response()->json([

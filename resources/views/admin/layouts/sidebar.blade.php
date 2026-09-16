@@ -32,6 +32,20 @@
                   <p>Dashboard</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{ route('admin.notifications') }}">
+                  <i class="fas fa-bell"></i>
+                  <p>All Notifications</p>
+                  @php
+                    $adminSidebarNotificationsCount = Auth::guard('admin')->check()
+                        ? Auth::guard('admin')->user()->unreadNotifications->count()
+                        : 0;
+                  @endphp
+                  @if ($adminSidebarNotificationsCount > 0)
+                    <span class="badge badge-danger" style="position:absolute; right: 18px; top: 10px; font-size: 10px; min-width: 18px; height:18px; line-height: 14px; border-radius: 50%; padding: 2px 5px;">{{ $adminSidebarNotificationsCount }}</span>
+                  @endif
+                </a>
+              </li>
               <li class="nav-section">
                 <span class="sidebar-mini-icon">
                   <i class="fa fa-ellipsis-h"></i>

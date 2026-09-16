@@ -25,7 +25,11 @@ class CartController extends Controller
         if ($user) {
             Cart::instance($user->id);
         } else {
-            return redirect()->route('front.userLogin')->with('message', 'Please log in to add items to the cart.');
+            return response()->json([
+                'status' => false,
+                'message' => 'Please log in to add items to the cart.',
+                'redirect' => route('front.userLogin'),
+            ]);
         }
 
         $cartContent = Cart::content();
@@ -57,7 +61,9 @@ class CartController extends Controller
 
         return response()->json([
             'status' => $status,
-            'message' => $message
+            'message' => $message,
+            'cartCount' => Cart::count(),
+            'miniCartHtml' => view('front.pages.layouts.mini-cart')->render(),
         ]);
     }
 
@@ -79,6 +85,20 @@ class CartController extends Controller
         ];
 
         return view('front.pages.cart', $data);
+    }
+
+    public function miniCart()
+    {
+        $user = Auth::user();
+        if ($user) {
+            Cart::instance($user->id);
+        }
+
+        return response()->json([
+            'status' => true,
+            'cartCount' => Cart::count(),
+            'miniCartHtml' => view('front.pages.layouts.mini-cart')->render(),
+        ]);
     }
 
 

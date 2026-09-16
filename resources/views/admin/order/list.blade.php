@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'All Products - ')
+@section('title', 'All Orders - ')
 
 @section('content')
 
@@ -60,7 +60,7 @@
                                         </form>
                                     </div> --}}
                                     <div class="col-sm-12 col-md-4">
-                                        <form action="" method="get">
+                                        <form action="{{ route('order.index') }}" method="get">
                                             <div id="add-row_filter" class="dataTables_filter">
                                                 <label>
                                                     Search:
@@ -79,8 +79,8 @@
                                 <a
                                     class="nav-link active"
                                     id="line-home-tab"
-                                    href="{{ route('product.index') }}"
-                                    >All({{ $orders->count() }})</a
+                                    href="{{ route('order.index') }}"
+                                    >All({{ $orders->total() }})</a
                                 >
                                 </li>
                             </ul>
@@ -112,48 +112,45 @@
                                             </tfoot>
                                             <tbody>
                                                 @if ($orders->isNotEmpty())
-                                                    @foreach ($orders as $order)                                                   
+                                                    @foreach ($orders as $order)
                                                         <tr>
                                                             <td>{{ $order->id }}</td>
                                                             <td>{{ $order->first_name }} {{ $order->last_name }}</td>
                                                             <td>{{ $order->email }}</td>
-                                                            <td>${{ $order->grand_total }}</td>
+                                                            <td>${{ number_format($order->grand_total, 2) }}<br><small class="text-muted">{{ ucfirst($order->payment_status) }}</small></td>
                                                             <td>
                                                             @if ($order->status == 'pending')
                                                                     <span class="badge badge-warning">Pending</span>
                                                                 @elseif ($order->status == 'shipped')
                                                                     <span class="badge badge-primary">Shipped</span>
-                                                                @else
+                                                                @elseif ($order->status == 'delivered')
                                                                     <span class="badge badge-success">Delivered</span>
+                                                                @else
+                                                                    <span class="badge badge-secondary">{{ ucfirst($order->status) }}</span>
                                                                 @endif
                                                             
                                                             </td>
                                                             
-                                                            <td>{{ $order->created_at->format('d M, y') }}</td>
+                                                            <td>{{ $order->created_at->format('d M, Y') }}</td>
                                                             <td>
                                                                 <div class="form-button-action">
-                                                                    <a href="">
-                                                                        <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg p-0 pe-4" data-original-title="Edit Task">
+                                                                    <a href="{{ route('order.edit', $order) }}" data-bs-toggle="tooltip" title="Edit order" class="btn btn-link btn-primary btn-lg p-0 pe-4">
                                                                             <i class="fa fa-edit"></i>
-                                                                        </button>
                                                                     </a>
-                                                                    <form action="" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this record?');">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button type="submit" data-bs-toggle="tooltip" title="Remove" class="btn btn-link btn-danger p-0">
-                                                                            <i class="fa fa-times"></i>
-                                                                        </button>
-                                                                    </form>
                                                                 </div>
                                                             </td>
                                                         </tr>
                                                     @endforeach
+                                                @else
+                                                    <tr>
+                                                        <td colspan="7" class="text-center py-5 text-muted">No orders found.</td>
+                                                    </tr>
                                                 @endif
                                             </tbody>
                                         </table>                          
                                     </div>
                                     <div>
-                                        {{-- {{ $orders->links('pagination::bootstrap-5') }} --}}
+                                        {{ $orders->links('pagination::bootstrap-5') }}
                                     </div>
                                 </div>
                             </div>

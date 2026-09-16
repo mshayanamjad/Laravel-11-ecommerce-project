@@ -1,66 +1,172 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Male Fashion Ecommerce
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Male Fashion is a Laravel 11 ecommerce application for browsing products, managing a cart and wishlist, placing orders, and administering the storefront.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Product catalog with categories, subcategories, brands, images, publishing, and draft states
+- Customer registration, login, profile, address, password, and account management
+- Shopping cart with AJAX add, update, delete, and mini-cart refresh
+- Wishlist toggle with AJAX add and remove actions
+- Checkout with cash-on-delivery and Stripe card payments
+- Country-based shipping rates with a safe `$0.00` fallback when no rate is configured
+- Customer order history and order detail pages
+- Order status tracking with status history and a progressive tracking interface
+- Admin order status updates for pending, confirmed, packed, shipped, delivered, and cancelled orders
+- Database notifications for customers and administrators
+- Product reviews and administrative review management
+- Admin dashboards for products, categories, brands, users, shipping, orders, and notifications
 
--   [Simple, fast routing engine](https://laravel.com/docs/routing).
--   [Powerful dependency injection container](https://laravel.com/docs/container).
--   Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
--   Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
--   Database agnostic [schema migrations](https://laravel.com/docs/migrations).
--   [Robust background job processing](https://laravel.com/docs/queues).
--   [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technology
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2 or newer
+- Laravel 11
+- MySQL/MariaDB through XAMPP, or another Laravel-supported database
+- Composer
+- Blade, jQuery, and the existing public assets
+- Stripe PHP SDK for card payments
+- Hardevine ShoppingCart for cart storage
 
-## Learning Laravel
+This project does not use npm, Vite, or a Node.js build pipeline. Frontend assets are already included in the project and are loaded from the application views.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Local Setup With XAMPP
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+The commands below assume the project is located at `D:\Xampp\htdocs\laravel` and that XAMPP provides PHP and MySQL.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Start Apache and MySQL from the XAMPP Control Panel.
+2. Open a terminal in the project directory.
+3. Install PHP dependencies:
 
-## Laravel Sponsors
+    ```bash
+    composer install
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+4. Create the environment file and application key:
 
-### Premium Partners
+    ```bash
+    copy .env.example .env
+    php artisan key:generate
+    ```
 
--   **[Vehikl](https://vehikl.com/)**
--   **[Tighten Co.](https://tighten.co)**
--   **[WebReinvent](https://webreinvent.com/)**
--   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
--   **[64 Robots](https://64robots.com)**
--   **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
--   **[Cyber-Duck](https://cyber-duck.co.uk)**
--   **[DevSquad](https://devsquad.com/hire-laravel-developers)**
--   **[Jump24](https://jump24.co.uk)**
--   **[Redberry](https://redberry.international/laravel/)**
--   **[Active Logic](https://activelogic.com)**
--   **[byte5](https://byte5.de)**
--   **[OP.GG](https://op.gg)**
+5. Configure the database in `.env`. A typical XAMPP MySQL configuration is:
 
-## Contributing
+    ```dotenv
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=male_fashion
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6. Create the `male_fashion` database in phpMyAdmin, then choose one database setup method:
 
-## Code of Conduct
+    - Run the current migrations and seeders:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+        ```bash
+        php artisan migrate --seed
+        php artisan db:seed --class=CountrySeeder
+        ```
 
-## Security Vulnerabilities
+    - Or import the included `male_fashion.sql` dump through phpMyAdmin instead of running migrations against an existing database.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+7. Create the public storage link if product files use Laravel storage:
+
+    ```bash
+    php artisan storage:link
+    ```
+
+8. Start the application with Laravel's local server:
+
+    ```bash
+    php artisan serve
+    ```
+
+    The application is then available at `http://127.0.0.1:8000/male-fashion`.
+
+    Alternatively, with Apache configured for the project, open `http://localhost/laravel/public/male-fashion`.
+
+## Configuration
+
+### Mail
+
+For local development, the default mailer can remain set to `log`. Emails will be written to `storage/logs/laravel.log` instead of being sent.
+
+For real email delivery, configure `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, and `MAIL_FROM_ADDRESS` in `.env`.
+
+### Stripe
+
+Stripe checkout requires test or live credentials in `.env`:
+
+```dotenv
+STRIPE_KEY=your_publishable_key
+STRIPE_SECRET=your_secret_key
+```
+
+Never commit real Stripe secrets or other credentials to source control. Cash on delivery does not require Stripe configuration.
+
+### Shipping
+
+Shipping rates are managed from the admin area. A country-specific rate is used first, followed by the `rest_of_world` rate. If neither exists, checkout continues with shipping set to zero.
+
+## Main URLs
+
+The storefront uses the `/male-fashion` prefix:
+
+- Storefront: `/male-fashion`
+- Shop: `/male-fashion/shop`
+- Customer dashboard: `/male-fashion/profile`
+- Customer orders: `/male-fashion/orders-list`
+- Customer notifications: `/male-fashion/notifications`
+- Admin login: `/admin/login`
+- Admin dashboard: `/admin/dashboard`
+- Admin notifications: `/admin/notifications`
+
+Most customer and admin routes require authentication.
+
+## Testing
+
+Run the automated test suite with:
+
+```bash
+php artisan test
+```
+
+The feature tests cover notification inbox access and order status history. Run a focused test with:
+
+```bash
+php artisan test --filter=OrderStatusHistoryTest
+```
+
+Useful validation commands after view or PHP changes:
+
+```bash
+php artisan view:cache
+php -l app/Http/Controllers/front/CheckoutController.php
+```
+
+## Project Structure
+
+```text
+app/Http/Controllers/       Storefront and admin request handling
+app/Models/                  Eloquent models
+app/Notifications/           Database notification classes
+database/migrations/         Database schema changes
+database/seeders/            Country and application seeders
+resources/views/front/       Storefront and customer Blade views
+resources/views/admin/       Admin Blade views
+routes/web.php               Storefront and admin routes
+tests/Feature/               Feature-level automated tests
+public/                      Public assets and entry point
+```
+
+## Development Notes
+
+- Use migrations for schema changes and keep existing user and order data intact.
+- Do not reset or reseed a shared database unless data loss is intentional.
+- Real-time WebSocket notifications are not currently enabled; notifications use Laravel's database notification channel.
+- Keep payment credentials in `.env` and out of commits.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This application is built on the Laravel framework and follows the project's existing license and dependency terms.

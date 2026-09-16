@@ -455,6 +455,11 @@ body[data-background-color="dark"] .demo-icon .icon-class {
     font-size: 18px !important;
 }
 
+.messages-notif-box .notif-center a .notif-icon, .notif-box .notif-center a .notif-icon {
+    max-width: 40px;
+    width: 100% !important;
+}
+
 @media screen and (max-width: 1200px) {
     #modalShowcase .modal-dialog {
         padding: 3rem !important;

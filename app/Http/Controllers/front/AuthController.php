@@ -5,6 +5,7 @@ namespace App\Http\Controllers\front;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Mail\OtpMail;
+use App\Notifications\AdminNewCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -91,6 +92,10 @@ class AuthController extends Controller
             // Clear OTP from session after successful registration
             session()->forget('otp');
 
+            User::where('role', 'admin')->get()->each(function ($admin) use ($user) {
+                $admin->notify(new AdminNewCustomer($user));
+            });
+
             return response()->json([
                 'status' => true,
                 'message' => 'User registered successfully.',
@@ -138,20 +143,19 @@ class AuthController extends Controller
         }
 
         // ✅ Proceed with authentication
-        if (Auth::attempt($credentials, $remember)) {
-            $user = Auth::user();
+        if (Auth::guard('web')->attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+            $user = Auth::guard('web')->user();
 
             if ($user->role !== 'customer') {
-                Auth::logout();
+                Auth::guard('web')->logout();
                 return redirect()->route('front.userLogin')
                     ->with('error', 'You are not authorized to access this page');
             }
 
-            if (session()->has('url.intended')) {
-                return redirect(session()->get('url.intended'));
-            }
+            $request->session()->forget('url.intended');
 
-            return redirect()->intended(route('front.home'));
+            return redirect()->route('front.home');
         }
 
         return redirect()->route('front.userLogin')
@@ -164,7 +168,9 @@ class AuthController extends Controller
 
     public function logout()
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
 
         return redirect()->route('front.userLogin')->with('success', 'You are logged out');
     }

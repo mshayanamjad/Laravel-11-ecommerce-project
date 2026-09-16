@@ -36,6 +36,15 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="{{ route('front.notifications') }}" class="collapsed">
+            <i class="fas fa-bell"></i>
+            <p>Notifications</p>
+            @if (auth()->user()->unreadNotifications->count() > 0)
+              <span class="badge badge-danger" style="position:absolute; right:18px; top:10px; min-width:18px; height:18px; padding:2px 5px; border-radius:50%; font-size:10px; line-height:14px;">{{ auth()->user()->unreadNotifications->count() }}</span>
+            @endif
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="{{ route('front.viewWishlist') }}" class="collapsed">
             <i class="fas fa-heart"></i>
             <p>Wishlist</p>

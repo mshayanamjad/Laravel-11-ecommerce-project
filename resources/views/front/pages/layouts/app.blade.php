@@ -24,6 +24,108 @@
     <link rel="stylesheet" href="{{ asset('front-assets/css/slicknav.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('front-assets/css/style.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('front-assets/css/review.css') }}" type="text/css">
+    <style>
+        .header__top__notification {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+        }
+
+        .header__top__notification .dropdown-toggle {
+            display: inline-flex;
+            width: 34px;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50%;
+            transition: background-color .2s ease;
+        }
+
+        .header__top__notification .dropdown-toggle:hover,
+        .header__top__notification .dropdown-toggle:focus {
+            color: #fff;
+            background: rgba(255, 255, 255, .15);
+            outline: none;
+        }
+
+        .header__top__notification .notification-badge {
+            position: absolute;
+            top: -3px;
+            right: -4px;
+            min-width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            background: #e74c3c;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 19px;
+            text-align: center;
+            border: 2px solid #111;
+        }
+
+        .notification-menu {
+            width: 340px;
+            max-width: calc(100vw - 30px);
+            margin-top: 12px;
+            border: 1px solid #e9ecef !important;
+            border-radius: 10px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .16) !important;
+        }
+
+        .notification-menu::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            right: 18px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-left: 1px solid #e9ecef;
+            border-top: 1px solid #e9ecef;
+            transform: rotate(45deg);
+        }
+
+        .notification-menu .dropdown-item {
+            position: relative;
+            z-index: 1;
+            display: block;
+            padding: 12px 15px !important;
+            white-space: normal;
+            border-bottom: 1px solid #f2f2f2;
+            background: #fff;
+            transition: background-color .2s ease;
+        }
+
+        .notification-menu .dropdown-item:hover,
+        .notification-menu .dropdown-item:focus {
+            background: #f8f9fa;
+        }
+
+        .notification-menu .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-menu .notification-empty {
+            cursor: default;
+        }
+
+        @media (max-width: 575px) {
+            .notification-menu {
+                position: fixed !important;
+                top: 42px !important;
+                right: 15px !important;
+                left: auto !important;
+                transform: none !important;
+            }
+        }
+    </style>
     <!-- Chatbot Styles -->    
 </head>
 
@@ -86,6 +188,8 @@
                                     <li>USD</li>
                                 </ul>
                             </div> --}}
+
+
                             <div class="header__top__hover user-name">
                                 @if (auth()->check())
                                     <span>Hi, {{ explode(' ', auth()->user()->name)[0] }} <i class="arrow_carrot-down"></i></span>
@@ -95,6 +199,13 @@
                                         </li>
                                         <li class="text-left">
                                             <a class="d-block w-100" href="{{ route('front.orderList') }}">My Orders</a>
+                                        </li>
+                                        <li class="text-left">
+                                            <a class="d-block w-100 position-relative" href="{{ route('front.notifications') }}">Notifications 
+                                                @if (auth()->user()->unreadNotifications->count() > 0)
+                                                <span class="badge badge-danger" style="position:absolute; right:18px; top:6px; min-width:18px; height:18px; padding:2px 5px; border-radius:50%; font-size:10px; line-height:14px;">{{ auth()->user()->unreadNotifications->count() }}</span>
+                                                @endif
+                                            </a>
                                         </li>
                                         <li class="text-left">
                                             <a class="d-block w-100" href="{{ route('front.changePassword') }}">Change Password</a>
@@ -177,39 +288,39 @@
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="footer__about">
                         <div class="footer__logo">
-                            <a href="#"><img src="{{ asset('front-assets/img/footer-logo.png') }}" alt=""></a>
+                            <a href="{{ route('front.home') }}"><img src="{{ asset('front-assets/img/footer-logo.png') }}" alt="Male Fashion"></a>
                         </div>
-                        <p>The customer is at the heart of our unique business model, which includes design.</p>
-                        <a href="#"><img src="{{ asset('front-assets/img/payment.png') }}" alt=""></a>
+                        <p>Modern essentials for everyday style — premium fashion, curated for comfort, confidence, and quality.</p>
+                        <a href="{{ route('front.shop') }}"><img src="{{ asset('front-assets/img/payment.png') }}" alt="Payment methods"></a>
                     </div>
                 </div>
                 <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>Shop</h6>
                         <ul>
-                            <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
+                            <li><a href="{{ route('front.home') }}">Home</a></li>
+                            <li><a href="{{ route('front.shop') }}">Shop</a></li>
+                            <li><a href="#">New Arrivals</a></li>
                             <li><a href="#">Sale</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-3 col-sm-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>Support</h6>
                         <ul>
                             <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Delivary</a></li>
-                            <li><a href="#">Return & Exchanges</a></li>
+                            <li><a href="#">Shipping</a></li>
+                            <li><a href="#">Returns</a></li>
+                            <li><a href="#">FAQ</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
                     <div class="footer__widget">
-                        <h6>NewLetter</h6>
+                        <h6>Newsletter</h6>
                         <div class="footer__newslatter">
-                            <p>Be the first to know about new arrivals, look books, sales & promos!</p>
+                            <p>Get the latest product drops, styling inspiration, and promotional offers.</p>
                             <form action="#">
                                 <input type="text" placeholder="Your email">
                                 <button type="submit"><span class="icon_mail_alt"></span></button>
@@ -221,12 +332,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="footer__copyright__text">
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        <p>Copyright ©
-                            <span class="current-year"></span> - 2020
-                            All rights reserved
-                        </p>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        <p>Copyright © <span class="current-year"></span> Male Fashion Store. All rights reserved.</p>
                     </div>
                 </div>
             </div>
@@ -326,6 +432,32 @@
             });
         });
 
+        function showAjaxMessage(message, success = true) {
+            if (typeof toastr !== 'undefined') {
+                if (success) {
+                    toastr.success(message);
+                } else {
+                    toastr.error(message);
+                }
+                return;
+            }
+
+            alert(message);
+        }
+
+        function refreshMiniCart(response) {
+            if (response && response.cartCount !== undefined) {
+                var cartBadge = $('#cart-icon span');
+                if (cartBadge.length) {
+                    cartBadge.text(response.cartCount);
+                }
+            }
+
+            if (response && response.miniCartHtml) {
+                $('#mini-cart').html(response.miniCartHtml);
+            }
+        }
+
         function addToCart(id) {
             var quantity = $('#quantity-' + id).val();
             $.ajax({
@@ -333,7 +465,7 @@
                 type: 'post',
                 data: {
                     id: id,
-                    quantity: quantity, // Send the quantity along with the product ID
+                    quantity: quantity,
                 },
                 dataType: 'json',
                 headers: {
@@ -341,10 +473,20 @@
                 },
                 success: function(response) {
                     if (response.status == true) {
-                        alert(response.message);
+                        showAjaxMessage(response.message, true);
+                        refreshMiniCart(response);
                     } else {
-                        alert(response.message);
+                        showAjaxMessage(response.message, false);
+                        if (response.redirect) {
+                            setTimeout(function() {
+                                window.location.href = response.redirect;
+                            }, 800);
+                        }
                     }
+                },
+                error: function(xhr) {
+                    var response = xhr.responseJSON || {};
+                    showAjaxMessage(response.message || 'Something went wrong.', false);
                 }
             });
         }
@@ -378,13 +520,27 @@
                 },
                 success: function(response) {
                     if (response.status == true) {
-                        alert(response.message);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
+                        var btn = $('#whishlist-' + id);
+                        if (btn.length) {
+                            if (response.removed === true) {
+                                btn.find('img').attr('src', "{{ asset('front-assets/img/icon/heart.png') }}");
+                            } else {
+                                btn.find('img').attr('src', "{{ asset('front-assets/img/icon/heart-filled.png') }}");
+                            }
+                        }
+                        showAjaxMessage(response.message, true);
                     } else {
-                        alert(response.message);
+                        showAjaxMessage(response.message, false);
+                        if (response.redirect) {
+                            setTimeout(function() {
+                                window.location.href = response.redirect;
+                            }, 800);
+                        }
                     }
+                },
+                error: function(xhr) {
+                    var response = xhr.responseJSON || {};
+                    showAjaxMessage(response.message || 'Something went wrong.', false);
                 }
             });
         }
@@ -400,13 +556,19 @@
                 },
                 success: function(response) {
                     if (response.status == true) {
-                        alert(response.message);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
+                        showAjaxMessage(response.message, true);
+                        var btn = $('#whishlist-' + id);
+                        if (btn.length) {
+                            btn.find('img').attr('src', "{{ asset('front-assets/img/icon/heart.png') }}");
+                        }
+                        $('#wishlist-item-' + id).remove();
                     } else {
-                        alert(response.message);
+                        showAjaxMessage(response.message, false);
                     }
+                },
+                error: function(xhr) {
+                    var response = xhr.responseJSON || {};
+                    showAjaxMessage(response.message || 'Something went wrong.', false);
                 }
             });
         }

@@ -20,6 +20,7 @@ use App\Http\Controllers\front\ReviewController;
 use App\Http\Controllers\front\ShopController;
 use App\Http\Controllers\front\WhishlistController;
 use App\Http\Controllers\AIRecommendationController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/getSlug', function (Request $request) {
     $slug = $request->title ? Str::slug($request->title) : '';
@@ -42,6 +43,7 @@ Route::group(['prefix' => 'male-fashion'], function () {
         // Cart Controller Routes
         Route::get('/cart', [CartController::class, 'cart'])->name('cart');
         Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('addToCart');
+        Route::get('/mini-cart', [CartController::class, 'miniCart'])->name('miniCart');
         Route::post('/update-cart', [CartController::class, 'updateCart'])->name('updateCart');
         Route::post('/delete-cart', [CartController::class, 'deleteItem'])->name('deleteCartItem');
         // Review Controller Routes
@@ -87,6 +89,10 @@ Route::group(['prefix' => 'male-fashion'], function () {
             Route::get('checkout', [CheckoutController::class, 'viewCheckout'])->name('viewCheckout');
             Route::post('checkout', [CheckoutController::class, 'checkoutProcess'])->name('checkoutProcess');
             Route::post('order-summary', [CheckoutController::class, 'getOrderSummery'])->name('getOrderSummery');
+
+            Route::get('notifications', [NotificationController::class, 'customerInbox'])->name('notifications');
+            Route::get('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+            Route::get('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
         });
     });
 });
@@ -111,6 +117,9 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('logout', [AdminController::class, 'logout'])->name('logout');
             Route::get('change-password', [AdminController::class, 'changePass'])->name('changePass');
             Route::post('change-password-process', [AdminController::class, 'changePassProcess'])->name('changePassProcess');
+            Route::get('notifications', [NotificationController::class, 'adminInbox'])->name('notifications');
+            Route::get('notifications/{id}/read', [NotificationController::class, 'adminMarkAsRead'])->name('notifications.read');
+            Route::get('notifications/mark-all-read', [NotificationController::class, 'adminMarkAllAsRead'])->name('notifications.markAllRead');
         });
 
 
@@ -145,6 +154,8 @@ Route::group(['prefix' => 'admin'], function () {
 
         // Order Routes
         Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
+        Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('order.edit');
+        Route::put('/orders/{order}', [OrderController::class, 'update'])->name('order.update');
 
         // Order Routes
         Route::resource('review', AdminReviewController::class);

@@ -19,9 +19,10 @@ class WhishlistController extends Controller
     public function addToWishlist(Request $request)
     {
         if (Auth::check() == false) {
-            session(['url.intended' => url()->previous()]);
             return response()->json([
                 'status' => false,
+                'message' => 'Please log in to add items to your wishlist.',
+                'redirect' => route('front.userLogin'),
             ]);
         }
 
@@ -29,28 +30,34 @@ class WhishlistController extends Controller
 
         if ($product == null) {
             return response()->json([
-                'status' => true,
+                'status' => false,
                 'message' => 'Product Not Found',
             ]);
         }
 
-        // Update or create wishlist entry
-        Whishlist::updateOrCreate(
-            [
-                'product_id' => $request->id,
-                'user_id' => Auth::user()->id,
-            ],
-            [
-                'product_id' => $request->id,
-                'user_id' => Auth::user()->id,
+        $wishlist = Whishlist::where('user_id', Auth::user()->id)
+            ->where('product_id', $request->id)
+            ->first();
 
-            ]
-        );
+        if ($wishlist) {
+            $wishlist->delete();
 
+            return response()->json([
+                'status' => true,
+                'removed' => true,
+                'message' => 'Product removed from your wishlist.',
+            ]);
+        }
+
+        Whishlist::create([
+            'product_id' => $request->id,
+            'user_id' => Auth::user()->id,
+        ]);
 
         return response()->json([
             'status' => true,
-            'message' => 'Product added to whiishlist',
+            'removed' => false,
+            'message' => 'Product added to wishlist.',
         ]);
     }
 
